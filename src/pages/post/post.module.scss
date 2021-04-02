@@ -52,10 +52,28 @@
     line-height: 1.575rem;
     text-align: justify;
     color: #D7D7D7;
+
+    & + p {
+      margin-top: 3rem;
+    }
+
   }
+    p:last-child {
+      margin-bottom: 3rem;
+    }
 }
 
-.banner{
+.banner {
+  object-fit: cover;
   width: 100%;
-  max-height: auto;
+  height: auto;
+  max-height: 400px;
+}
+
+.loading{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

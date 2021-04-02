@@ -10,6 +10,7 @@ import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
 import styles from './home.module.scss';
 import commonStyles from '../styles/common.module.scss';
 import { getPrismicClient } from '../services/prismic';
+import Header from '../components/Header';
 
 interface Post {
   uid?: string;
@@ -34,13 +35,7 @@ function makePost(data: ApiSearchResponse): Post[] {
   return data.results.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: format(
-        new Date(post.last_publication_date),
-        'dd MMM yyyy',
-        {
-          locale: ptBR,
-        }
-      ),
+      first_publication_date: post.first_publication_date,
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
@@ -70,6 +65,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
       <Head>
         <title>Posts</title>
       </Head>
+      <Header />
       <div className={commonStyles.Container}>
         <ul className={styles.contentContainer}>
           {posts.map(post => (
@@ -81,7 +77,13 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
                   <div>
                     <time>
                       <FiCalendar />
-                      {post.first_publication_date}
+                      {format(
+                        new Date(post.first_publication_date),
+                        'dd MMM yyyy',
+                        {
+                          locale: ptBR,
+                        }
+                      )}
                     </time>
                     <span>
                       <FiUser />
