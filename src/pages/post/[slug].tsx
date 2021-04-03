@@ -35,6 +35,18 @@ interface PostProps {
   post: Post;
 }
 
+function showUterancesComments(): void {
+  const script = document.createElement('script');
+  const anchor = document.getElementById('inject-comments-for-uterances');
+  script.setAttribute('src', 'https://utteranc.es/client.js');
+  script.setAttribute('crossorigin', 'anonymous');
+  script.setAttribute('async', 'true');
+  script.setAttribute('repo', 'wernerjr/ignite-desafio-05-blog');
+  script.setAttribute('issue-term', 'pathname');
+  script.setAttribute('theme', 'github-dark');
+  anchor.appendChild(script);
+}
+
 export default function Post({ post }: PostProps): JSX.Element {
   const router = useRouter();
   const [estimatedReadTime, setEstimatedReadTime] = useState(0);
@@ -45,6 +57,7 @@ export default function Post({ post }: PostProps): JSX.Element {
         return acc + RichText.asText(now.body).match(/\S+/g).length;
       }, 0);
       setEstimatedReadTime(Math.ceil(totalWordsCount / 200));
+      showUterancesComments();
     }
   }, [post, router.isFallback]);
 
@@ -89,6 +102,7 @@ export default function Post({ post }: PostProps): JSX.Element {
             </div>
           ))}
         </main>
+        <div id="inject-comments-for-uterances" />
       </div>
     </>
   );
