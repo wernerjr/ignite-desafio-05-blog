@@ -13,9 +13,12 @@ import { getPrismicClient } from '../../services/prismic';
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import Header from '../../components/Header';
+import PreviewButton from '../../components/PreviewButton';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
+
   data: {
     title: string;
     banner: {
@@ -33,6 +36,7 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  preview: boolean;
 }
 
 function showUterancesComments(): void {
@@ -47,7 +51,7 @@ function showUterancesComments(): void {
   anchor.appendChild(script);
 }
 
-export default function Post({ post }: PostProps): JSX.Element {
+export default function Post({ post, preview }: PostProps): JSX.Element {
   const router = useRouter();
   const [estimatedReadTime, setEstimatedReadTime] = useState(0);
 
@@ -91,6 +95,17 @@ export default function Post({ post }: PostProps): JSX.Element {
               {estimatedReadTime} min
             </span>
           </div>
+          {post.last_publication_date && (
+            <span>
+              {`* editado em ${format(
+                new Date(post.last_publication_date),
+                "dd MMM yyyy', às' HH:MM",
+                {
+                  locale: ptBR,
+                }
+              )}`}
+            </span>
+          )}
         </header>
         <main className={styles.mainContainer}>
           {post.data.content.map(content => (
@@ -103,6 +118,7 @@ export default function Post({ post }: PostProps): JSX.Element {
           ))}
         </main>
         <div id="inject-comments-for-uterances" />
+        {preview && <PreviewButton />}
       </div>
     </>
   );
@@ -128,15 +144,24 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async ({
+  params,
+  preview = false,
+  previewData,
+}) => {
   const { slug } = params;
 
   const prismic = getPrismicClient();
-  const response = await prismic.getByUID('posts', String(slug), {});
+  const response = await prismic.getByUID('posts', String(slug), {
+    ref: previewData?.ref ?? null,
+  });
+
+  console.log(response);
 
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
+    last_publication_date: response.last_publication_date,
     data: {
       title: response.data.title,
       subtitle: response.data.subtitle,
@@ -151,6 +176,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       post,
+      preview,
     },
     revalidate: 1,
   };

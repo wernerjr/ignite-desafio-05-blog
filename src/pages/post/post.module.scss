@@ -36,6 +36,15 @@
       }
     }
   }
+
+  > span {
+    display: block;
+    margin-top: 1rem;
+    font-style: italic;
+    font-size: 14px;
+    line-height: 17px;
+    color: #BBBBBB;
+  }
 }
 
 .mainContainer div {
