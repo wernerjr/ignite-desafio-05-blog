@@ -72,6 +72,33 @@
     }
 }
 
+.footerContainer {
+  margin: 3rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  div {
+    display: flex;
+    flex-direction: column;
+
+    a {
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 19px;
+      color: var(--highlight);
+    }
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+}
+
+.separator {
+  border-top: 1px solid var(--body);
+  opacity: 0.1;
+}
+
 .banner {
   object-fit: cover;
   width: 100%;

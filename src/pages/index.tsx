@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import { useState } from 'react';
 import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
+import { v4 } from 'uuid';
 import styles from './home.module.scss';
 import commonStyles from '../styles/common.module.scss';
 import { getPrismicClient } from '../services/prismic';
@@ -55,8 +56,9 @@ export default function Home({
   const [nextPage, setNextPage] = useState<string | null>(
     postsPagination.next_page
   );
+
   function handleLoadPosts(): void {
-    fetch(postsPagination.next_page)
+    fetch(nextPage)
       .then(response => response.json())
       .then(data => {
         const postList = makePost(data);
@@ -74,7 +76,7 @@ export default function Home({
       <div className={commonStyles.Container}>
         <ul className={styles.contentContainer}>
           {posts.map(post => (
-            <li key={post.uid}>
+            <li key={v4()}>
               <Link href={`/post/${post.uid}`}>
                 <a>
                   <strong>{post.data.title}</strong>

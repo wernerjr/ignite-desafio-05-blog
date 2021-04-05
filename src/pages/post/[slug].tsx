@@ -7,7 +7,9 @@ import { useEffect, useState } from 'react';
 import { FiCalendar, FiUser, FiClock } from 'react-icons/fi';
 import { RichText } from 'prismic-dom';
 import { useRouter } from 'next/router';
+import { v4 } from 'uuid';
 
+import Link from 'next/link';
 import { getPrismicClient } from '../../services/prismic';
 
 import commonStyles from '../../styles/common.module.scss';
@@ -16,9 +18,17 @@ import Header from '../../components/Header';
 import PreviewButton from '../../components/PreviewButton';
 
 interface Post {
+  uid: string;
   first_publication_date: string | null;
   last_publication_date: string | null;
-
+  prevpost?: {
+    uid: string;
+    title: string;
+  };
+  nextpost?: {
+    uid: string;
+    title: string;
+  };
   data: {
     title: string;
     banner: {
@@ -42,6 +52,7 @@ interface PostProps {
 function showUterancesComments(): void {
   const script = document.createElement('script');
   const anchor = document.getElementById('inject-comments-for-uterances');
+  anchor.innerHTML = '';
   script.setAttribute('src', 'https://utteranc.es/client.js');
   script.setAttribute('crossorigin', 'anonymous');
   script.setAttribute('async', 'true');
@@ -109,14 +120,37 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
         </header>
         <main className={styles.mainContainer}>
           {post.data.content.map(content => (
-            <div key={content.heading}>
+            <div key={v4()}>
               <h1>{content.heading}</h1>
               {content.body.map(body => (
-                <p key={body.text}>{body.text}</p>
+                <p key={v4()}>{body.text}</p>
               ))}
             </div>
           ))}
         </main>
+        <div className={styles.separator} />
+        <footer className={styles.footerContainer}>
+          <div>
+            {post.prevpost && (
+              <>
+                {post.prevpost.title}
+                <Link href={`/post/${post.prevpost.uid}`}>
+                  <a>Post anterior</a>
+                </Link>
+              </>
+            )}
+          </div>
+          <div>
+            {post.nextpost && (
+              <>
+                {post.nextpost.title}
+                <Link href={`/post/${post.nextpost.uid}`}>
+                  <a>Próximo post</a>
+                </Link>
+              </>
+            )}
+          </div>
+        </footer>
         <div id="inject-comments-for-uterances" />
         {preview && <PreviewButton />}
       </div>
@@ -156,7 +190,21 @@ export const getStaticProps: GetStaticProps = async ({
     ref: previewData?.ref ?? null,
   });
 
-  console.log(response);
+  const prevpost = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.first_publication_date desc]',
+    })
+  ).results[0];
+
+  const nextpost = (
+    await prismic.query(Prismic.predicates.at('document.type', 'posts'), {
+      pageSize: 1,
+      after: response.id,
+      orderings: '[document.first_publication_date]',
+    })
+  ).results[0];
 
   const post = {
     uid: response.uid,
@@ -171,7 +219,23 @@ export const getStaticProps: GetStaticProps = async ({
       author: response.data.author,
       content: response.data.content,
     },
+    prevpost: null,
+    nextpost: null,
   };
+
+  if (prevpost) {
+    post.prevpost = {
+      uid: prevpost.uid,
+      title: prevpost.data.title,
+    };
+  }
+
+  if (nextpost) {
+    post.nextpost = {
+      uid: nextpost.uid,
+      title: nextpost.data.title,
+    };
+  }
 
   return {
     props: {
