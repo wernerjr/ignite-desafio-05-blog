@@ -106,17 +106,18 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
               {estimatedReadTime} min
             </span>
           </div>
-          {post.last_publication_date && (
-            <span>
-              {`* editado em ${format(
-                new Date(post.last_publication_date),
-                "dd MMM yyyy', às' HH:MM",
-                {
-                  locale: ptBR,
-                }
-              )}`}
-            </span>
-          )}
+          {post.last_publication_date &&
+            post.last_publication_date !== post.first_publication_date && (
+              <span>
+                {`* editado em ${format(
+                  new Date(post.last_publication_date),
+                  "dd MMM yyyy', às' HH:MM",
+                  {
+                    locale: ptBR,
+                  }
+                )}`}
+              </span>
+            )}
         </header>
         <main className={styles.mainContainer}>
           {post.data.content.map(content => (
