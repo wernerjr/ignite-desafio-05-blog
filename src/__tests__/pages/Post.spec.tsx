@@ -47,6 +47,9 @@ const mockedQueryReturn = {
 const mockedGetByUIDReturn = {
   uid: 'como-utilizar-hooks',
   first_publication_date: '2021-03-25T19:25:28+0000',
+  last_publication_date: '2021-03-25T19:25:28+0000',
+  prevpost: null,
+  nextpost: null,
   data: {
     title: 'Como utilizar Hooks',
     subtitle: 'Pensando em sincronização em vez de ciclos de vida',
@@ -248,7 +251,7 @@ describe('Post', () => {
   it('should be able to render post document info', () => {
     const postProps = mockedGetByUIDReturn;
 
-    render(<Post post={postProps} />);
+    render(<Post post={postProps} preview={false} />);
 
     screen.getByText('Como utilizar Hooks');
     screen.getByText('25 mar 2021');
@@ -268,7 +271,7 @@ describe('Post', () => {
 
     const postProps = mockedGetByUIDReturn;
 
-    render(<Post post={postProps} />);
+    render(<Post post={postProps} preview={false} />);
 
     screen.getByText('Carregando...');
   });
@@ -276,7 +279,7 @@ describe('Post', () => {
   it('should be able to render Header component', () => {
     const postProps = mockedGetByUIDReturn;
 
-    render(<Post post={postProps} />);
+    render(<Post post={postProps} preview={false} />);
 
     screen.getByAltText('logo');
   });

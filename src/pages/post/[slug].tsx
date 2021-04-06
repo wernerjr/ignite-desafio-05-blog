@@ -224,14 +224,14 @@ export const getStaticProps: GetStaticProps = async ({
     nextpost: null,
   };
 
-  if (prevpost) {
+  if (prevpost && prevpost.data) {
     post.prevpost = {
       uid: prevpost.uid,
       title: prevpost.data.title,
     };
   }
 
-  if (nextpost) {
+  if (nextpost && nextpost.data) {
     post.nextpost = {
       uid: nextpost.uid,
       title: nextpost.data.title,
