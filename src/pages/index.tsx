@@ -132,6 +132,7 @@ export const getStaticProps: GetStaticProps = async ({
       ],
       pageSize: 1,
       ref: previewData?.ref ?? null,
+      orderings: '[document.first_publication_date desc]',
     }
   );
 
